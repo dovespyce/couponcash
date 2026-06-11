@@ -541,11 +541,68 @@ td:first-child { color: var(--text); }
   margin-right: 6px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* SUCCESS FULLSCREEN OVERLAY */
+.success-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--dark);
+  z-index: 10000;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  animation: slideUp 0.4s ease;
+}
+.success-overlay.active { display: flex; }
+.success-overlay h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.8rem;
+  color: var(--green);
+  margin-bottom: 15px;
+  letter-spacing: 2px;
+  line-height: 1.1;
+}
+.success-overlay p {
+  font-size: 1.15rem;
+  color: #ffffff;
+  line-height: 1.6;
+  max-width: 320px;
+  margin: 0 auto;
+}
+.success-overlay .amount-text {
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 2rem;
+  display: inline-block;
+  margin: 8px 0;
+}
+.success-icon {
+  font-size: 4.5rem;
+  margin-bottom: 15px;
+  animation: bounce 2s infinite;
+}
+@keyframes slideUp {
+  from { transform: translateY(60px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
 </style>
 </head>
 <body>
 
-<!-- COUPON MODAL -->
+<div class="success-overlay" id="successScreen">
+  <div class="success-icon">🎉✅</div>
+  <h1>TRANSACTION SUCCESSFUL</h1>
+  <p>The sum of <br><span class="amount-text" id="successAmount">₦0</span><br> has been sent to your account successfully!</p>
+  <button class="btn-claim" onclick="location.reload()" style="max-width: 240px; margin-top: 35px;">DONE</button>
+</div>
+
 <div class="modal-overlay" id="couponModal">
   <div class="modal">
     <div style="font-size:2.5rem; margin-bottom:10px;">💸</div>
@@ -568,7 +625,6 @@ td:first-child { color: var(--text); }
   </div>
 </div>
 
-<!-- NOTIFICATION POPUP -->
 <div class="notification-popup" id="notifPopup" style="display:none;">
   <div class="notif-avatar" id="notifAvatar">C</div>
   <div class="notif-text">
@@ -577,9 +633,7 @@ td:first-child { color: var(--text); }
   </div>
 </div>
 
-<!-- USER PAGE -->
 <div id="userPage">
-  <!-- HERO -->
   <div class="hero">
     <div class="badge">🔴 LIVE GIVEAWAY</div>
     <div class="money-rain">💸💰💸</div>
@@ -588,7 +642,6 @@ td:first-child { color: var(--text); }
   </div>
 
   <div class="container">
-    <!-- HOW IT WORKS -->
     <div class="steps">
       <div class="step">
         <div class="step-icon">🎟️</div>
@@ -612,7 +665,6 @@ td:first-child { color: var(--text); }
       </div>
     </div>
 
-    <!-- CLAIM FORM -->
     <div class="card">
       <h2>CLAIM YOUR CASH 💰</h2>
 
@@ -670,7 +722,6 @@ td:first-child { color: var(--text); }
       <div class="msg" id="userMsg"></div>
     </div>
 
-    <!-- FAQ SECTION -->
     <div class="section-title">FREQUENTLY ASKED QUESTIONS ❓</div>
     <div class="faq-section">
       <div class="faq-item">
@@ -691,7 +742,6 @@ td:first-child { color: var(--text); }
       </div>
     </div>
 
-    <!-- TESTIMONIALS -->
     <div class="section-title">WINNERS SAY 🏆</div>
 
     <div class="testimonial">
@@ -757,7 +807,6 @@ td:first-child { color: var(--text); }
   </div>
 </div>
 
-<!-- LOGIN PAGE -->
 <div class="login-wrap" id="loginPage">
   <div class="login-card">
     <div style="font-size:2rem; margin-bottom:8px;">🔐</div>
@@ -775,31 +824,12 @@ td:first-child { color: var(--text); }
   </div>
 </div>
 
-<!-- ADMIN PANEL -->
 <div class="admin-wrap" id="adminPage">
   <div class="admin-header">
     <div class="admin-title">⚡ ADMIN PANEL</div>
     <button class="btn-logout" onclick="showUser()">Logout</button>
   </div>
 
-  <!-- CREATE COUPON -->
-  <div class="admin-card">
-    <h3>CREATE COUPON CODE</h3>
-    <div class="input-row">
-      <div class="form-group">
-        <label>Coupon Code</label>
-        <input type="text" id="newCode" placeholder="e.g. WIN5000" style="text-transform:uppercase;">
-      </div>
-      <div class="form-group">
-        <label>Amount (₦)</label>
-        <input type="number" id="newAmount" placeholder="e.g. 5000">
-      </div>
-    </div>
-    <button class="btn-create" onclick="createCoupon()">✅ Create Coupon</button>
-    <div class="msg" id="adminMsg"></div>
-  </div>
-
-  <!-- ALL COUPONS -->
   <div class="admin-card">
     <h3>ALL COUPONS (<span id="couponCount">0</span>)</h3>
     <div class="table-wrap">
@@ -816,7 +846,6 @@ td:first-child { color: var(--text); }
     </div>
   </div>
 
-  <!-- ALL CLAIMS -->
   <div class="admin-card">
     <h3>ALL CLAIMS</h3>
     <button class="btn-export" onclick="exportCSV()">📥 Export to CSV</button>
@@ -854,202 +883,55 @@ const SPECIAL_CODES = [
 ];
 
 const AUTO_GENERATED_CODES = [
-  { code: "DROP125", amount: 15000 },
-  { code: "GIFT328", amount: 10000 },
-  { code: "DROP792", amount: 30000 },
-  { code: "DROP704", amount: 20000 },
-  { code: "CASH130", amount: 7500 },
-  { code: "GIFT338", amount: 30000 },
-  { code: "CASH674", amount: 12000 },
-  { code: "QUICK325", amount: 25000 },
-  { code: "PAY928", amount: 5000 },
-  { code: "WIN814", amount: 20000 },
-  { code: "DROPMAX384", amount: 10000 },
-  { code: "GIFT881", amount: 18000 },
-  { code: "DROP194", amount: 20000 },
-  { code: "DROP467", amount: 18000 },
-  { code: "PAY926", amount: 5000 },
-  { code: "ALERT649", amount: 7500 },
-  { code: "QUICK180", amount: 30000 },
-  { code: "PAY949", amount: 35000 },
-  { code: "DROPMAX691", amount: 12000 },
-  { code: "DROP146", amount: 12000 },
-  { code: "PAY181", amount: 12000 },
-  { code: "DROP489", amount: 15000 },
-  { code: "ALERT750", amount: 18000 },
-  { code: "WIN479", amount: 18000 },
-  { code: "GIFT786", amount: 15000 },
-  { code: "DROP723", amount: 10000 },
-  { code: "GIFT267", amount: 25000 },
-  { code: "QUICK376", amount: 30000 },
-  { code: "GIFT801", amount: 18000 },
-  { code: "CASH334", amount: 5000 },
-  { code: "DROPMAX510", amount: 15000 },
-  { code: "DROP316", amount: 35000 },
-  { code: "DROPMAX317", amount: 25000 },
-  { code: "QUICK758", amount: 25000 },
-  { code: "WIN371", amount: 10000 },
-  { code: "GIFT862", amount: 30000 },
-  { code: "PAY864", amount: 35000 },
-  { code: "QUICK697", amount: 20000 },
-  { code: "DROPMAX324", amount: 10000 },
-  { code: "ALERT193", amount: 5000 },
-  { code: "DROP256", amount: 10000 },
-  { code: "QUICK710", amount: 7500 },
-  { code: "QUICK490", amount: 35000 },
-  { code: "ALERT641", amount: 15000 },
-  { code: "CASH796", amount: 7500 },
-  { code: "PAY887", amount: 18000 },
-  { code: "DROP400", amount: 20000 },
-  { code: "WIN564", amount: 5000 },
-  { code: "PAY612", amount: 10000 },
-  { code: "DROP991", amount: 15000 },
-  { code: "GIFT256", amount: 18000 },
-  { code: "WIN652", amount: 30000 },
-  { code: "CASH713", amount: 18000 },
-  { code: "ALERT119", amount: 7500 },
-  { code: "DROPMAX999", amount: 15000 },
-  { code: "GIFT159", amount: 12000 },
-  { code: "DROP187", amount: 25000 },
-  { code: "DROP878", amount: 30000 },
-  { code: "WIN231", amount: 25000 },
-  { code: "QUICK316", amount: 30000 },
-  { code: "GIFT830", amount: 15000 },
-  { code: "QUICK787", amount: 18000 },
-  { code: "ALERT629", amount: 25000 },
-  { code: "DROP353", amount: 12000 },
-  { code: "DROP446", amount: 5000 },
-  { code: "GIFT702", amount: 12000 },
-  { code: "CASH172", amount: 5000 },
-  { code: "GIFT169", amount: 5000 },
-  { code: "DROPMAX172", amount: 30000 },
-  { code: "GIFT385", amount: 25000 },
-  { code: "GIFT652", amount: 10000 },
-  { code: "ALERT348", amount: 25000 },
-  { code: "QUICK294", amount: 7500 },
-  { code: "DROP774", amount: 20000 },
-  { code: "DROPMAX533", amount: 20000 },
-  { code: "ALERT984", amount: 5000 },
-  { code: "DROP162", amount: 20000 },
-  { code: "DROPMAX919", amount: 7500 },
-  { code: "GIFT296", amount: 12000 },
-  { code: "ALERT243", amount: 20000 },
-  { code: "WIN385", amount: 25000 },
-  { code: "GIFT995", amount: 7500 },
-  { code: "ALERT927", amount: 30000 },
-  { code: "DROP151", amount: 30000 },
-  { code: "CASH195", amount: 12000 },
-  { code: "WIN516", amount: 25000 },
-  { code: "ALERT318", amount: 20000 },
-  { code: "CASH268", amount: 20000 },
-  { code: "CASH499", amount: 15000 },
-  { code: "ALERT392", amount: 20000 },
-  { code: "ALERT258", amount: 12000 },
-  { code: "PAY322", amount: 5000 },
-  { code: "CASH865", amount: 18000 },
-  { code: "CASH151", amount: 35000 },
-  { code: "ALERT614", amount: 30000 },
-  { code: "WIN158", amount: 30000 },
-  { code: "DROP971", amount: 10000 },
-  { code: "DROP709", amount: 7500 },
-  { code: "GIFT513", amount: 7500 },
-  { code: "GIFT692", amount: 35000 },
-  { code: "CASH734", amount: 7500 },
-  { code: "QUICK773", amount: 35000 },
-  { code: "DROPMAX367", amount: 12000 },
-  { code: "DROPMAX344", amount: 15000 },
-  { code: "QUICK234", amount: 15000 },
-  { code: "ALERT423", amount: 7500 },
-  { code: "CASH569", amount: 35000 },
-  { code: "DROP175", amount: 30000 },
-  { code: "GIFT618", amount: 15000 },
-  { code: "WIN457", amount: 7500 },
-  { code: "GIFT478", amount: 15000 },
-  { code: "WIN548", amount: 30000 },
-  { code: "PAY726", amount: 30000 },
-  { code: "CASH783", amount: 30000 },
-  { code: "PAY779", amount: 7500 },
-  { code: "WIN370", amount: 7500 },
-  { code: "DROP860", amount: 30000 },
-  { code: "WIN378", amount: 15000 },
-  { code: "GIFT834", amount: 18000 },
-  { code: "GIFT803", amount: 15000 },
-  { code: "ALERT357", amount: 5000 },
-  { code: "DROP749", amount: 20000 },
-  { code: "PAY145", amount: 5000 },
-  { code: "DROPMAX889", amount: 10000 },
-  { code: "PAY265", amount: 25000 },
-  { code: "QUICK674", amount: 5000 },
-  { code: "DROP177", amount: 10000 },
-  { code: "CASH954", amount: 18000 },
-  { code: "WIN540", amount: 10000 },
-  { code: "CASH415", amount: 18000 },
-  { code: "CASH466", amount: 12000 },
-  { code: "GIFT782", amount: 7500 },
-  { code: "DROPMAX898", amount: 30000 },
-  { code: "QUICK735", amount: 10000 },
-  { code: "GIFT985", amount: 10000 },
-  { code: "WIN522", amount: 5000 },
-  { code: "WIN854", amount: 18000 },
-  { code: "QUICK921", amount: 12000 },
-  { code: "PAY263", amount: 7500 },
-  { code: "QUICK993", amount: 5000 },
-  { code: "ALERT327", amount: 12000 },
-  { code: "ALERT458", amount: 15000 },
-  { code: "CASH775", amount: 12000 },
-  { code: "QUICK436", amount: 15000 },
-  { code: "DROP891", amount: 15000 },
-  { code: "DROPMAX756", amount: 30000 },
-  { code: "QUICK795", amount: 30000 },
-  { code: "DROPMAX128", amount: 7500 },
-  { code: "PAY282", amount: 35000 },
-  { code: "PAY139", amount: 7500 },
-  { code: "QUICK453", amount: 18000 },
-  { code: "QUICK720", amount: 30000 },
-  { code: "DROP494", amount: 35000 },
-  { code: "GIFT360", amount: 5000 },
-  { code: "QUICK101", amount: 30000 },
-  { code: "GIFT472", amount: 20000 },
-  { code: "DROP780", amount: 18000 },
-  { code: "DROPMAX779", amount: 7500 },
-  { code: "PAY619", amount: 15000 },
-  { code: "QUICK434", amount: 20000 },
-  { code: "PAY667", amount: 10000 },
-  { code: "GIFT530", amount: 20000 },
-  { code: "WIN730", amount: 35000 },
-  { code: "PAY515", amount: 30000 },
-  { code: "CASH411", amount: 15000 },
-  { code: "GIFT540", amount: 35000 },
-  { code: "DROPMAX576", amount: 25000 },
-  { code: "ALERT791", amount: 12000 },
-  { code: "ALERT912", amount: 10000 },
-  { code: "DROP390", amount: 30000 },
-  { code: "DROPMAX195", amount: 12000 },
-  { code: "PAY330", amount: 12000 },
-  { code: "WIN125", amount: 5000 },
-  { code: "GIFT586", amount: 35000 },
-  { code: "DROP566", amount: 20000 },
-  { code: "GIFT835", amount: 20000 },
-  { code: "ALERT509", amount: 12000 },
-  { code: "WIN771", amount: 5000 },
-  { code: "DROP897", amount: 20000 },
-  { code: "GIFT280", amount: 30000 },
-  { code: "ALERT151", amount: 30000 },
-  { code: "GIFT968", amount: 7500 },
-  { code: "ALERT236", amount: 25000 },
-  { code: "DROPMAX873", amount: 25000 },
-  { code: "QUICK950", amount: 30000 },
-  { code: "ALERT262", amount: 25000 },
-  { code: "ALERT365", amount: 12000 },
-  { code: "PAY884", amount: 30000 },
-  { code: "ALERT741", amount: 12000 },
-  { code: "PAY550", amount: 7500 },
-  { code: "PAY340", amount: 15000 },
-  { code: "DROPMAX427", amount: 30000 },
-  { code: "DROP241", amount: 10000 },
-  { code: "GIFT492", amount: 10000 },
-  { code: "GIFT165", amount: 20000 },
-  { code: "QUICK438", amount: 30000 }
+  { code: "DROP125", amount: 3000 }, { code: "GIFT328", amount: 5000 }, { code: "DROP792", amount: 30000 }, { code: "DROP704", amount: 20000 },
+  { code: "CASH130", amount: 2000 }, { code: "GIFT338", amount: 30000 }, { code: "CASH674", amount: 6000 }, { code: "QUICK325", amount: 25000 },
+  { code: "PAY928", amount: 4000 }, { code: "WIN814", amount: 20000 }, { code: "DROPMAX384", amount: 7000 }, { code: "GIFT881", amount: 18000 },
+  { code: "DROP194", amount: 3000 }, { code: "DROP467", amount: 5000 }, { code: "PAY926", amount: 5000 }, { code: "ALERT649", amount: 7500 },
+  { code: "QUICK180", amount: 30000 }, { code: "PAY949", amount: 8000 }, { code: "DROPMAX691", amount: 12000 }, { code: "DROP146", amount: 2000 },
+  { code: "PAY181", amount: 12000 }, { code: "DROP489", amount: 4000 }, { code: "ALERT750", amount: 18000 }, { code: "WIN479", amount: 6000 },
+  { code: "GIFT786", amount: 15000 }, { code: "DROP723", amount: 10000 }, { code: "GIFT267", amount: 25000 }, { code: "QUICK376", amount: 30000 },
+  { code: "GIFT801", amount: 18000 }, { code: "CASH334", amount: 5000 }, { code: "DROPMAX510", amount: 2000 }, { code: "DROP316", amount: 35000 },
+  { code: "DROPMAX317", amount: 3000 }, { code: "QUICK758", amount: 25000 }, { code: "WIN371", amount: 7000 }, { code: "GIFT862", amount: 30000 },
+  { code: "PAY864", amount: 35000 }, { code: "QUICK697", amount: 20000 }, { code: "DROPMAX324", amount: 10000 }, { code: "ALERT193", amount: 4000 },
+  { code: "DROP256", amount: 10000 }, { code: "QUICK710", amount: 7500 }, { code: "QUICK490", amount: 35000 }, { code: "ALERT641", amount: 15000 },
+  { code: "CASH796", amount: 8000 }, { code: "PAY887", amount: 18000 }, { code: "DROP400", amount: 5000 }, { code: "WIN564", amount: 5000 },
+  { code: "PAY612", amount: 10000 }, { code: "DROP991", amount: 3000 }, { code: "GIFT256", amount: 18000 }, { code: "WIN652", amount: 30000 },
+  { code: "CASH713", amount: 18000 }, { code: "ALERT119", amount: 2000 }, { code: "DROPMAX999", amount: 15000 }, { code: "GIFT159", amount: 12000 },
+  { code: "DROP187", amount: 25000 }, { code: "DROP878", amount: 30000 }, { code: "WIN231", amount: 25000 }, { code: "QUICK316", amount: 30000 },
+  { code: "GIFT830", amount: 15000 }, { code: "QUICK787", amount: 18000 }, { code: "ALERT629", amount: 25000 }, { code: "DROP353", amount: 12000 },
+  { code: "DROP446", amount: 5000 }, { code: "GIFT702", amount: 12000 }, { code: "CASH172", amount: 5000 }, { code: "GIFT169", amount: 6000 },
+  { code: "DROPMAX172", amount: 30000 }, { code: "GIFT385", amount: 25000 }, { code: "GIFT652", amount: 10000 }, { code: "ALERT348", amount: 4000 },
+  { code: "QUICK294", amount: 7500 }, { code: "DROP774", amount: 20000 }, { code: "DROPMAX533", amount: 20000 }, { code: "ALERT984", amount: 7000 },
+  { code: "DROP162", amount: 20000 }, { code: "DROPMAX919", amount: 7500 }, { code: "GIFT296", amount: 12000 }, { code: "ALERT243", amount: 20000 },
+  { code: "WIN385", amount: 25000 }, { code: "GIFT995", amount: 7500 }, { code: "ALERT927", amount: 30000 }, { code: "DROP151", amount: 8000 },
+  { code: "CASH195", amount: 12000 }, { code: "WIN516", amount: 2000 }, { code: "ALERT318", amount: 20000 }, { code: "CASH268", amount: 20000 },
+  { code: "CASH499", amount: 15000 }, { code: "ALERT392", amount: 20000 }, { code: "ALERT258", amount: 12000 }, { code: "PAY322", amount: 5000 },
+  { code: "CASH865", amount: 18000 }, { code: "CASH151", amount: 35000 }, { code: "ALERT614", amount: 30000 }, { code: "WIN158", amount: 30000 },
+  { code: "DROP971", amount: 10000 }, { code: "DROP709", amount: 3000 }, { code: "GIFT513", amount: 7500 }, { code: "GIFT692", amount: 35000 },
+  { code: "CASH734", amount: 5000 }, { code: "QUICK773", amount: 35000 }, { code: "DROPMAX367", amount: 12000 }, { code: "DROPMAX344", amount: 15000 },
+  { code: "QUICK234", amount: 15000 }, { code: "ALERT423", amount: 6000 }, { code: "CASH569", amount: 35000 }, { code: "DROP175", amount: 30000 },
+  { code: "GIFT618", amount: 15000 }, { code: "WIN457", amount: 7500 }, { code: "GIFT478", amount: 15000 }, { code: "WIN548", amount: 30000 },
+  { code: "PAY726", amount: 30000 }, { code: "CASH783", amount: 30000 }, { code: "PAY779", amount: 2000 }, { code: "WIN370", amount: 4000 },
+  { code: "DROP860", amount: 30000 }, { code: "WIN378", amount: 15000 }, { code: "GIFT834", amount: 18000 }, { code: "GIFT803", amount: 15000 },
+  { code: "ALERT357", amount: 5000 }, { code: "DROP749", amount: 20000 }, { code: "PAY145", amount: 5000 }, { code: "DROPMAX889", amount: 10000 },
+  { code: "PAY265", amount: 25000 }, { code: "QUICK674", amount: 7000 }, { code: "DROP177", amount: 10000 }, { code: "CASH954", amount: 18000 },
+  { code: "WIN540", amount: 10000 }, { code: "CASH415", amount: 18000 }, { code: "CASH466", amount: 12000 }, { code: "GIFT782", amount: 7500 },
+  { code: "DROPMAX898", amount: 30000 }, { code: "QUICK735", amount: 10000 }, { code: "GIFT985", amount: 10000 }, { code: "WIN522", amount: 5000 },
+  { code: "WIN854", amount: 18000 }, { code: "QUICK921", amount: 12000 }, { code: "PAY263", amount: 7500 }, { code: "QUICK993", amount: 8000 },
+  { code: "ALERT327", amount: 12000 }, { code: "ALERT458", amount: 15000 }, { code: "CASH775", amount: 12000 }, { code: "QUICK436", amount: 15000 },
+  { code: "DROP891", amount: 15000 }, { code: "DROPMAX756", amount: 30000 }, { code: "QUICK795", amount: 30000 }, { code: "DROPMAX128", amount: 3000 },
+  { code: "PAY282", amount: 35000 }, { code: "PAY139", amount: 5000 }, { code: "QUICK453", amount: 18000 }, { code: "QUICK720", amount: 30000 },
+  { code: "DROP494", amount: 35000 }, { code: "GIFT360", amount: 2000 }, { code: "QUICK101", amount: 30000 }, { code: "GIFT472", amount: 20000 },
+  { code: "DROP780", amount: 18000 }, { code: "DROPMAX779", amount: 4000 }, { code: "PAY619", amount: 15000 }, { code: "QUICK434", amount: 20000 },
+  { code: "PAY667", amount: 10000 }, { code: "GIFT530", amount: 20000 }, { code: "WIN730", amount: 35000 }, { code: "PAY515", amount: 30000 },
+  { code: "CASH411", amount: 15000 }, { code: "GIFT540", amount: 35000 }, { code: "DROPMAX576", amount: 25000 }, { code: "ALERT791", amount: 12000 },
+  { code: "ALERT912", amount: 10000 }, { code: "DROP390", amount: 30000 }, { code: "DROPMAX195", amount: 12000 }, { code: "PAY330", amount: 12000 },
+  { code: "WIN125", amount: 6000 }, { code: "GIFT586", amount: 35000 }, { code: "DROP566", amount: 20000 }, { code: "GIFT835", amount: 20000 },
+  { code: "ALERT509", amount: 12000 }, { code: "WIN771", amount: 5000 }, { code: "DROP897", amount: 20000 }, { code: "GIFT280", amount: 30000 },
+  { code: "ALERT151", amount: 30000 }, { code: "GIFT968", amount: 7000 }, { code: "ALERT236", amount: 25000 }, { code: "DROPMAX873", amount: 25000 },
+  { code: "QUICK950", amount: 30000 }, { code: "ALERT262", amount: 25000 }, { code: "ALERT365", amount: 12000 }, { code: "PAY884", amount: 30000 },
+  { code: "ALERT741", amount: 12000 }, { code: "PAY550", amount: 8000 }, { code: "PAY340", amount: 15000 }, { code: "DROPMAX427", amount: 30000 },
+  { code: "DROP241", amount: 10000 }, { code: "GIFT492", amount: 10000 }, { code: "GIFT165", amount: 20000 }, { code: "QUICK438", amount: 30000 }
 ];
 
 // Combine special items and generated lists into standard storage structure
@@ -1078,7 +960,7 @@ function toggleFaq(element) {
 // ========== STORAGE HANDLERS ==========
 function getCoupons() {
   try {
-    let stored = localStorage.getItem('cd_coupons');
+    let stored = localStorage.getItem('cd_coupons_v3');
     if (!stored) {
       // Map master configurations seamlessly
       const initialList = MASTER_COUPONS.map(c => ({
@@ -1108,7 +990,7 @@ function getCoupons() {
     return [];
   }
 }
-function saveCoupons(c) { localStorage.setItem('cd_coupons', JSON.stringify(c)); }
+function saveCoupons(c) { localStorage.setItem('cd_coupons_v3', JSON.stringify(c)); }
 function getClaims() { try { return JSON.parse(localStorage.getItem('cd_claims') || '[]'); } catch(e) { return []; } }
 function saveClaims(c) { localStorage.setItem('cd_claims', JSON.stringify(c)); }
 
@@ -1159,27 +1041,6 @@ function openWhatsApp() {
   }
   window.open(url, '_blank');
   closeModal();
-}
-
-// ========== CREATE COUPON ==========
-function createCoupon() {
-  const code = document.getElementById('newCode').value.trim().toUpperCase();
-  const amount = parseFloat(document.getElementById('newAmount').value);
-  if (!code || !amount || amount < 1) return showMsg('adminMsg', '❌ Fill in all fields!', 'error');
-  
-  // Explicit administrative confirmation step
-  const confirmAction = confirm(`Are you sure you want to create coupon code "${code}" with amount ₦${amount.toLocaleString()}?`);
-  if (!confirmAction) return;
-
-  const coupons = getCoupons();
-  if (coupons.find(c => c.code === code)) return showMsg('adminMsg', '❌ Code already exists!', 'error');
-  
-  coupons.unshift({ code, amount, used: false, usedBy: null, createdAt: new Date().toLocaleString() });
-  saveCoupons(coupons);
-  document.getElementById('newCode').value = '';
-  document.getElementById('newAmount').value = '';
-  showMsg('adminMsg', `✅ Coupon ${code} created for ₦${amount.toLocaleString()}!`, 'success');
-  renderCoupons();
 }
 
 // ========== RENDER COUPONS ==========
@@ -1286,7 +1147,10 @@ function claimCoupon() {
   document.getElementById('accountNumber').value = '';
   document.getElementById('couponCode').value = '';
 
-  showMsg('userMsg', 'Approved! Wait 4-10 minutes for alert', 'success');
+  // Trigger Full Screen Success Overlay
+  document.getElementById('successAmount').textContent = `₦${coupon.amount.toLocaleString()}`;
+  document.getElementById('userPage').style.display = 'none';
+  document.getElementById('successScreen').classList.add('active');
 }
 
 // ========== SHOW MSG ==========
